@@ -31,7 +31,7 @@ func main() {
 	server.Handle("GET", "/post", GetMediaById)
 	server.Handle("DELETE", "/post", DeleteMediaObject)
 	server.Handle("GET", "/posts/services", GetMediaService)
-	server.Handle("GET", "/posts/offers", GetMediaOffers)
+	server.Handle("GET", "/posts/offers", server.AddMiddleware(GetMediaOffers, AcceptedHosts()))
 	server.Handle("GET", "/posts/offers/user", GetUserMediaOffers)
 	server.Handle("GET", "/posts/services/user", GetUserMediaServices)
 	server.Handle("GET", "/posts/offers/category", GetOffersFilteredMedia)

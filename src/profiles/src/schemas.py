@@ -28,11 +28,16 @@ class ProfileCreate(ProfileBase):
 
 class Profile(ProfileBase):
     id: str
+    image: Optional[str] = None
+    cover: Optional[str] = None
     email: Optional[str] = None
     first_name: Optional[str] = None
     last_name: Optional[str] = None
     birthday: Optional[datetime] = None
     description: Optional[str] = None
+    is_company: Optional[bool] = None
+    web: Optional[str] = None
+    name: Optional[str] = None
     creation_date: Optional[datetime]
     last_modification: Optional[datetime]
 
