@@ -3,7 +3,7 @@
 ---
 __Advertisement :)__
 
-- This is my "Superior Grade" (don't know how it's called in your country) project it's not professional or nothing similar, it's just my try to learn new tech and introduce my self in micro services.
+- This is my "Superior Grade" (don't know how it's called in your country) project it's not professional or nothing similar, it's just my try to learn new tech and introduce my self into micro services.
 - Feel free to use copy or send me feedback!
 
 Hope you like the project!
