@@ -5,6 +5,5 @@ GLOBAL USER
 name = app
 password = '12345678A'
 
-database name users
-database owner users
-database owner password 12345678A
+database name app_profiles
+database name app_posts
