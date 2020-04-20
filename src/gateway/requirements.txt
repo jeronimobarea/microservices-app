@@ -1,4 +1,0 @@
-Django
-PyJWT
-psycopg2-binary
-firebase
