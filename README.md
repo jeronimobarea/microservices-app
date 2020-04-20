@@ -25,7 +25,7 @@ Hope you like the project!
 > > > > *This API is programmed using .net CORE 3 (C#) and it hosts all the chat data and store it in a Firebase realtime database.*
 > > >
 > > > 📂**Posts**
-> > > *This API is programmed in Go and it hosts all the posts data and store it in a postgresql database.*
+> > > > *This API is programmed in Go and it hosts all the posts data and store it in a postgresql database.*
 > > >
 > > > 📂**Backup**
 > > > > *This API is programmed in Node.js it get's all the new data and change's from the other API's and storage it in a firestore database.*
