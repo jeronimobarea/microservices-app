@@ -26,6 +26,15 @@ class ProfileCreate(ProfileBase):
     pass
 
 
+class BasicProfile(BaseModel):
+    id: str
+    image: Optional[str] = None
+    first_name: Optional[str] = None
+
+    class Config:
+        orm_mode = True
+
+
 class Profile(ProfileBase):
     id: str
     image: Optional[str] = None

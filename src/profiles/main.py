@@ -1,16 +1,14 @@
 # Uvicorn
-import time
-
 import uvicorn
 
 # Utils
-from datetime import datetime
 from typing import List
 
 # Fast Api
-from fastapi import FastAPI, HTTPException, Depends, Request, Response
+from fastapi import FastAPI, HTTPException, Depends, Request, Response, Query, UploadFile
 
 # SQL Alchemy
+from fastapi.params import File
 from sqlalchemy.orm import Session
 
 # Project files
@@ -63,6 +61,7 @@ def read_root():
     return RedirectResponse('/profiles/')
 
 
+# Revised
 @app.post("/profiles/", response_model=schemas.Profile, tags=['Profiles'])
 def create_profile(profile: schemas.ProfileCreate, db: Session = Depends(get_db)):
     """
@@ -76,9 +75,34 @@ def create_profile(profile: schemas.ProfileCreate, db: Session = Depends(get_db)
     db_profile = crud.get_profile_by_email(db, email=profile.email)
     if db_profile:
         raise HTTPException(status_code=400, detail="Email already registered")
-    return crud.create_profile(db=db, profile=profile)
+
+    account = crud.create_profile(db=db, profile=profile)
+
+    """consumer_url = 'http://localhost:8001/consumers'
+
+    consumer_data = {
+        'username': account.email,
+        'custom_id': account.id
+    }
+    response = requests.post(url=consumer_url, data=consumer_data)
+
+    basic_auth_url = 'http://localhost:8001/consumers/{0}/basic-auth'.format(account.email)
+
+    basic_auth_data = {
+        'username': account.email,
+        'password': "password"
+    }
+
+    response = requests.post(url=basic_auth_url, data=basic_auth_data)
+
+    api_key_url = 'http://localhost:8001/consumers/{0}/key-auth'.format(account.email)
+
+    response = requests.post(url=api_key_url)"""
+
+    return account
 
 
+# Revised
 @app.get("/profiles/", response_model=schemas.Pagination, tags=['Profiles'])
 def read_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db)):
     """
@@ -93,6 +117,33 @@ def read_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db))
     return profiles
 
 
+# Revised
+@app.get("/profiles/basic/list/", response_model=List[schemas.BasicProfile], tags=['Profiles'])
+def basic_list_data(profiles_id: List[str], db: Session = Depends(get_db)):
+    """
+
+    :param profiles_id:
+    :param db:
+    :return:
+    """
+    data = crud.get_profile_list_by_id(db=db, profiles_id=profiles_id)
+    return data
+
+
+# Revised
+@app.get("/profiles/basic/{profile_id}", response_model=schemas.BasicProfile, tags=['Profiles'])
+def basic_data(profile_id: str, db: Session = Depends(get_db)):
+    """
+
+    :param profile_id:
+    :param db:
+    :return:
+    """
+    data = crud.get_basic_data(db=db, profile_id=profile_id, )
+    return data
+
+
+# Revised
 @app.get("/profiles/active/", response_model=schemas.Pagination, tags=['Profiles'])
 def read_active_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db)):
     """
@@ -107,6 +158,7 @@ def read_active_profiles(pagination: schemas.Pagination, db: Session = Depends(g
     return profiles
 
 
+# Revised
 @app.get("/profiles/inactive/", response_model=schemas.Pagination, tags=['Profiles'])
 def read_inactive_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db)):
     """
@@ -121,6 +173,7 @@ def read_inactive_profiles(pagination: schemas.Pagination, db: Session = Depends
     return profiles
 
 
+# Revised
 @app.get("/profiles/{profile_id}", response_model=schemas.Profile, tags=['Profiles'])
 def read_profile(profile_id: str, db: Session = Depends(get_db)):
     """
@@ -137,12 +190,27 @@ def read_profile(profile_id: str, db: Session = Depends(get_db)):
     return db_profile
 
 
+@app.patch("/profiles/user/picture/{profile_id}", response_model=schemas.Profile, tags=['Profiles'])
+def update_picture(profile_id: str, file: UploadFile = File(...), db: Session = Depends(get_db)):
+    """
+
+    :param file:
+    :param profile_id:
+    :param db:
+    :return:
+    """
+    data = crud.upload_image(db=db, profile_id=profile_id, file=file)
+    return data
+
+
+# Revised
 @app.patch("/profiles/", response_model=schemas.Profile, tags=['Profiles'])
 def update_profile(profile: schemas.Profile, db: Session = Depends(get_db)):
     """
     Calls the crud function update_profile() and send the parameters it needs,
     if the db_profile var gets a None it raise an http exception if it's not None it returns
     the object.
+    :param file:
     :param profile: profile data we wan't to update
     :param db: database connection
     :return:
@@ -153,6 +221,7 @@ def update_profile(profile: schemas.Profile, db: Session = Depends(get_db)):
     return db_profile
 
 
+# Revised
 @app.patch("/profiles/deactivate/{profile_id}", response_model=schemas.ProfileDelete, tags=['Profiles'])
 def deactivate_profile(profile_id: str, db: Session = Depends(get_db)):
     """
@@ -169,6 +238,7 @@ def deactivate_profile(profile_id: str, db: Session = Depends(get_db)):
     return db_profile
 
 
+# Revised
 @app.patch("/profiles/activate/{profile_id}", response_model=schemas.ProfileDelete, tags=['Profiles'])
 def activate_profile(profile_id: str, db: Session = Depends(get_db)):
     """

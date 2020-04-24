@@ -1,16 +1,21 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
 using AppChat.config;
 using AppChat.Domain;
 using AppChat.models;
 using AppChat.Queries;
 using AppChat.Response;
+using AppChat.utils;
 using AutoMapper;
 using FireSharp.Config;
 using FireSharp.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+
 
 namespace AppChat.Controllers
 {
@@ -20,14 +25,15 @@ namespace AppChat.Controllers
     {
         private readonly ApplicationContext _context;
         private readonly IMapper _mapper;
+        private readonly IFirebaseClient _firebaseClient;
+        private readonly Utils _utils = new Utils();
+        private static readonly HttpClient client = new HttpClient();
 
         private readonly IFirebaseConfig _firebaseConfig = new FirebaseConfig
         {
             AuthSecret = "74fpIphhf7mdRApMbs5kkdGJQ1IyaKFcsjCdKNb4",
             BasePath = "https://app-from-idea-to-code.firebaseio.com/"
         };
-
-        private readonly IFirebaseClient _firebaseClient;
 
         public ChatController(ApplicationContext context, IMapper mapper)
         {
@@ -40,19 +46,22 @@ namespace AppChat.Controllers
                 : "Error in firebase connection");
         }
 
-        [HttpGet("active")]
+        [HttpGet("user/active")]
         public OkObjectResult GetActiveUserChats([FromQuery] PaginationQuery paginationQuery, string userId)
         {
             var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
             var totalPages = _context.Chats.Count(c => c.Id != null);
             var chatResponse = _context.Chats
-                .Where(c => c.ChatCreator == userId || c.RequestedUser == userId).Where(c => c.Status.Equals("1"))
+                .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
+                .Where(c => c.Status.Equals("1"))
                 .OrderBy(c => c.CreationDate)
                 .ToList()
                 .Skip(paginationFilter.Page)
                 .Take(paginationFilter.PerPage);
 
-            var paginationResponse = new PagedResponse<Chat>(chatResponse)
+            var filledChat = _utils.fillChatData(chatResponse.ToList());
+
+            var paginationResponse = new PagedResponse<Chat>(filledChat.Result.ToList())
             {
                 Page = paginationFilter.Page,
                 PerPage = paginationFilter.PerPage,
@@ -63,7 +72,7 @@ namespace AppChat.Controllers
             return Ok(paginationResponse);
         }
 
-        [HttpGet("pending")]
+        [HttpGet("user/pending")]
         public OkObjectResult GetPendingUserChats([FromQuery] PaginationQuery paginationQuery, string userId)
         {
             var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
@@ -75,7 +84,9 @@ namespace AppChat.Controllers
                 .Skip(paginationFilter.Page)
                 .Take(paginationFilter.PerPage);
 
-            var paginationResponse = new PagedResponse<Chat>(chatResponse)
+            var filledChat = _utils.fillChatData(chatResponse.ToList());
+
+            var paginationResponse = new PagedResponse<Chat>(filledChat.Result.ToList())
             {
                 Page = paginationFilter.Page,
                 PerPage = paginationFilter.PerPage,
@@ -98,10 +109,39 @@ namespace AppChat.Controllers
             return _context.Chats.Where(c => c.IsBlocked);
         }
 
-        [HttpGet("{id}", Name = "GetById")]
-        public async Task<OkObjectResult> Get(string id)
+        [HttpGet("/{id}")]
+        public async Task<OkObjectResult> Get([FromQuery] string id)
         {
             var chat = await _context.FindAsync<Chat>(Guid.Parse(id));
+
+            var data = new List<string> {chat.ChatCreator, chat.RequestedUser};
+
+            var url = "http://localhost:8100/profiles/basic/list/";
+            var output = JsonConvert.SerializeObject(data.ToArray());
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url),
+                Content = new StringContent(output, Encoding.UTF8, "application/json"),
+            };
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+
+            var userList =
+                await response.Content.ReadAsAsync<List<UserData>>().ConfigureAwait(false);
+
+            if (chat.ChatCreator == userList[0].Id)
+            {
+                chat.CreatorData = userList[0];
+                chat.RequestedUserData = userList[1];
+            }
+            else
+            {
+                chat.CreatorData = userList[1];
+                chat.RequestedUserData = userList[0];
+            }
 
             return Ok(chat);
         }

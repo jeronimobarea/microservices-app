@@ -2,10 +2,14 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"golang.org/x/tools/go/ssa/interp/testdata/src/errors"
+	"log"
 	"net/http"
+	"time"
 )
 
+// Revised
 func MediaPostQuery(r *http.Request) ([]byte, error) {
 	/*
 		This function handles the decode of the request data and insert it to the database
@@ -28,6 +32,7 @@ func MediaPostQuery(r *http.Request) ([]byte, error) {
 	return response, nil
 }
 
+// Revised
 func FilterOffersByCategory(page, perPage int, category string) ([]byte, error) {
 	var mediaPost []MediaPost
 
@@ -44,6 +49,7 @@ func FilterOffersByCategory(page, perPage int, category string) ([]byte, error) 
 	return res, nil
 }
 
+// Revised
 func FilterServicesByCategory(page, perPage int, category string) ([]byte, error) {
 	var mediaPost []MediaPost
 
@@ -60,6 +66,7 @@ func FilterServicesByCategory(page, perPage int, category string) ([]byte, error
 	return res, nil
 }
 
+// Revised
 func GetMediaPostQuery(page, perPage int) ([]byte, error) {
 	/*
 		This function get's the page and per page numbers and returns
@@ -67,6 +74,8 @@ func GetMediaPostQuery(page, perPage int) ([]byte, error) {
 	var mediaPost []MediaPost
 	items := db.Offset(page).Limit(perPage).Find(&mediaPost).Value
 
+	mediaPost, err := FillUserData(mediaPost)
+
 	var count int
 	_ = db.Table("media_posts").Count(&count)
 
@@ -78,11 +87,14 @@ func GetMediaPostQuery(page, perPage int) ([]byte, error) {
 	return res, nil
 }
 
+// Revised
 func GetMediaOffersQuery(page, perPage int) ([]byte, error) {
 	var mediaPost []MediaPost
 
 	items := db.Offset(page).Limit(perPage).Where("is_service = ?", false).Find(&mediaPost).Value
 
+	mediaPost, err := FillUserData(mediaPost)
+
 	var count int
 	_ = db.Table("media_posts").Count(&count)
 
@@ -94,11 +106,14 @@ func GetMediaOffersQuery(page, perPage int) ([]byte, error) {
 	return res, nil
 }
 
+// Revised
 func GetMediaServicesQuery(page, perPage int) ([]byte, error) {
 	var mediaPost []MediaPost
 
 	items := db.Offset(page).Limit(perPage).Where("is_service = ?", true).Find(&mediaPost).Value
 
+	mediaPost, err := FillUserData(mediaPost)
+
 	var count int
 	_ = db.Table("media_posts").Count(&count)
 
@@ -110,11 +125,14 @@ func GetMediaServicesQuery(page, perPage int) ([]byte, error) {
 	return res, nil
 }
 
+// Revised
 func GetUserMediaOffersQuery(page, perPage int, id string) ([]byte, error) {
 	var mediaPost []MediaPost
 
 	items := db.Offset(page).Limit(perPage).Where("is_service = ? AND creator_id = ?", false, id).Find(&mediaPost).Value
 
+	mediaPost, err := FillUserData(mediaPost)
+
 	var count int
 	_ = db.Table("media_posts").Count(&count)
 
@@ -126,11 +144,14 @@ func GetUserMediaOffersQuery(page, perPage int, id string) ([]byte, error) {
 	return res, nil
 }
 
+// Revised
 func GetUserMediaServicesQuery(page, perPage int, id string) ([]byte, error) {
 	var mediaPost []MediaPost
 
 	items := db.Offset(page).Limit(perPage).Where("is_service = ? AND creator_id = ?", true, id).Find(&mediaPost).Value
 
+	mediaPost, err := FillUserData(mediaPost)
+
 	var count int
 	_ = db.Table("media_posts").Count(&count)
 
@@ -142,23 +163,43 @@ func GetUserMediaServicesQuery(page, perPage int, id string) ([]byte, error) {
 	return res, nil
 }
 
+// Revised
 func GetMediaByIdQuery(id string) ([]byte, error) {
 	var mediaPost MediaPost
-	err := db.Find(&mediaPost).Where("id=?", id).Value
-	if err != nil {
-		return nil, errors.New("Error retrieving data from the table")
+	_ = db.Where("id=?", id).Find(&mediaPost).Value
+
+	if mediaPost.CreatorId == "" {
+		return nil, errors.New("Invalid id")
 	}
+
+	req, err := http.Get("http://127.0.0.1:8100/profiles/basic/" + mediaPost.CreatorId)
+
+	fmt.Println("http://127.0.0.1:8100/profiles/basic/" + mediaPost.CreatorId)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+
+	}
+
+	decoder := json.NewDecoder(req.Body)
+	var userData UserData
+	err = decoder.Decode(&userData)
+	if err != nil {
+		panic(err)
+	}
+	log.Println(userData)
+
+	mediaPost.UserData.FirstName = userData.FirstName
+	mediaPost.UserData.Image = userData.Image
+
 	response, _ := mediaPost.ToJson()
 	return response, nil
 }
 
+// Revised
 func PatchMediaPostQuery(id string, r *http.Request) ([]byte, error) {
 	var mediaPost MediaPost
-	err := db.Find(&mediaPost).Where("id=?", id)
-
-	if err != nil {
-		return nil, errors.New("Error retrieving data from the table")
-	}
+	_ = db.Find(&mediaPost).Where("id=?", id)
 
 	var updated MediaPost
 	decoder := json.NewDecoder(r.Body)
@@ -167,6 +208,8 @@ func PatchMediaPostQuery(id string, r *http.Request) ([]byte, error) {
 	mediaPost.Description = updated.Description
 	mediaPost.Title = updated.Title
 	mediaPost.PaymentQuantity = updated.PaymentQuantity
+	mediaPost.JobType = updated.JobType
+	mediaPost.LastModification = time.Now()
 
 	db.Save(mediaPost)
 	response, _ := mediaPost.ToJson()
@@ -174,11 +217,9 @@ func PatchMediaPostQuery(id string, r *http.Request) ([]byte, error) {
 	return response, nil
 }
 
+// Revised
 func DeleteMediaObjectQuery(id string) error {
 	var mediaPost MediaPost
-	err := db.Where("id=?", id).Delete(&mediaPost)
-	if err != nil {
-		return errors.New("Could not find any object with that id")
-	}
+	 _ = db.Where("id=?", id).Delete(&mediaPost)
 	return nil
 }

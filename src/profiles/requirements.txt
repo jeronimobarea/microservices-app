@@ -8,3 +8,5 @@ async-generator
 requests~=2.23.0
 uuid~=1.30
 starlette~=0.13.2
+requests
+Pyrebase~=3.0.27

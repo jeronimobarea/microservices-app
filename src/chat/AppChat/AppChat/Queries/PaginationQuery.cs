@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace AppChat.Queries
 {
     public class PaginationQuery
@@ -14,7 +16,7 @@ namespace AppChat.Queries
             PerPage = perPage;
         }
 
-        public int Page { get; set; }
-        public int PerPage { get; set; }     
+        [JsonPropertyName("page")] public int Page { get; set; }
+        [JsonPropertyName("per_page")] public int PerPage { get; set; }
     }
 }

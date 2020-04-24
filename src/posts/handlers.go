@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	_ "github.com/jinzhu/gorm/dialects/postgres"
 	"net/http"
 	"strconv"
@@ -182,6 +184,7 @@ func MediaUpdateRequest(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Println(err)
 		return
 	}
 
@@ -253,6 +256,7 @@ func DeleteMediaObject(w http.ResponseWriter, r *http.Request) {
 
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
+		fmt.Println(err)
 		return
 	}
 
