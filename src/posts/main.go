@@ -16,7 +16,7 @@ func main() {
 	fmt.Println("Successfully connected!")
 
 	// Handle the database tables
-	if db.Table("media_posts") == nil {
+	if db.Table("media_posts").Value == nil {
 		db.Table("media_posts").CreateTable(&MediaPost{})
 	}
 	//db.Table("media_posts").CreateTable(&MediaPost{})
@@ -30,11 +30,8 @@ func main() {
 	server.Handle("POST", "/posts", MediaPostRequest)
 	server.Handle("GET", "/post", GetMediaById)
 	server.Handle("DELETE", "/post", DeleteMediaObject)
-	server.Handle("GET", "/posts/services", GetMediaService)
-	server.Handle("GET", "/posts/offers", GetMediaOffers)
-	server.Handle("GET", "/posts/offers/user", GetUserMediaOffers)
-	server.Handle("GET", "/posts/services/user", GetUserMediaServices)
-	server.Handle("GET", "/posts/offers/category", GetOffersFilteredMedia)
-	server.Handle("GET", "/posts/services/category", GetServicesFilteredMedia)
+	server.Handle("GET", "/posts/type/", GetMediaByType)
+	server.Handle("GET", "/posts/user", GetUserPostByType)
+	server.Handle("GET", "/posts/filter", GetPostsFilteredByCategory)
 	_ = server.Listen()
 }

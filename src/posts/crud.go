@@ -33,27 +33,10 @@ func MediaPostQuery(r *http.Request) ([]byte, error) {
 }
 
 // Revised
-func FilterOffersByCategory(page, perPage int, category string) ([]byte, error) {
+func FilterPostTypeByCategory(page, perPage int, postType, category string) ([]byte, error) {
 	var mediaPost []MediaPost
 
-	items := db.Offset(page).Limit(perPage).Where("is_service = ? AND job_type = ?", false, category).Find(&mediaPost).Value
-
-	var count int
-	_ = db.Table("media_posts").Count(&count)
-
-	res, err := Paginate(page, perPage, items, count)
-
-	if err != nil && res == nil {
-		return nil, errors.New("Failed the pagination")
-	}
-	return res, nil
-}
-
-// Revised
-func FilterServicesByCategory(page, perPage int, category string) ([]byte, error) {
-	var mediaPost []MediaPost
-
-	items := db.Offset(page).Limit(perPage).Where("is_service = ? AND job_type = ?", true, category).Find(&mediaPost).Value
+	items := db.Offset(page).Limit(perPage).Where("post_type = ? AND category = ?", postType, category).Find(&mediaPost).Value
 
 	var count int
 	_ = db.Table("media_posts").Count(&count)
@@ -88,10 +71,10 @@ func GetMediaPostQuery(page, perPage int) ([]byte, error) {
 }
 
 // Revised
-func GetMediaOffersQuery(page, perPage int) ([]byte, error) {
+func GetMediaServicesQuery(page, perPage int, postType string) ([]byte, error) {
 	var mediaPost []MediaPost
 
-	items := db.Offset(page).Limit(perPage).Where("is_service = ?", false).Find(&mediaPost).Value
+	items := db.Offset(page).Limit(perPage).Where("post_type = ?", postType).Find(&mediaPost).Value
 
 	mediaPost, err := FillUserData(mediaPost)
 
@@ -107,48 +90,10 @@ func GetMediaOffersQuery(page, perPage int) ([]byte, error) {
 }
 
 // Revised
-func GetMediaServicesQuery(page, perPage int) ([]byte, error) {
+func GetUserMediaFilterQuery(page, perPage int, postType, id string) ([]byte, error) {
 	var mediaPost []MediaPost
 
-	items := db.Offset(page).Limit(perPage).Where("is_service = ?", true).Find(&mediaPost).Value
-
-	mediaPost, err := FillUserData(mediaPost)
-
-	var count int
-	_ = db.Table("media_posts").Count(&count)
-
-	res, err := Paginate(page, perPage, items, count)
-
-	if err != nil && res == nil {
-		return nil, errors.New("Failed the pagination")
-	}
-	return res, nil
-}
-
-// Revised
-func GetUserMediaOffersQuery(page, perPage int, id string) ([]byte, error) {
-	var mediaPost []MediaPost
-
-	items := db.Offset(page).Limit(perPage).Where("is_service = ? AND creator_id = ?", false, id).Find(&mediaPost).Value
-
-	mediaPost, err := FillUserData(mediaPost)
-
-	var count int
-	_ = db.Table("media_posts").Count(&count)
-
-	res, err := Paginate(page, perPage, items, count)
-
-	if err != nil && res == nil {
-		return nil, errors.New("Failed the pagination")
-	}
-	return res, nil
-}
-
-// Revised
-func GetUserMediaServicesQuery(page, perPage int, id string) ([]byte, error) {
-	var mediaPost []MediaPost
-
-	items := db.Offset(page).Limit(perPage).Where("is_service = ? AND creator_id = ?", true, id).Find(&mediaPost).Value
+	items := db.Offset(page).Limit(perPage).Where("post_type = ? AND creator_id = ?", postType, id).Find(&mediaPost).Value
 
 	mediaPost, err := FillUserData(mediaPost)
 
@@ -189,7 +134,7 @@ func GetMediaByIdQuery(id string) ([]byte, error) {
 	}
 	log.Println(userData)
 
-	mediaPost.UserData.FirstName = userData.FirstName
+	mediaPost.UserData.UserName = userData.UserName
 	mediaPost.UserData.Image = userData.Image
 
 	response, _ := mediaPost.ToJson()
@@ -208,7 +153,7 @@ func PatchMediaPostQuery(id string, r *http.Request) ([]byte, error) {
 	mediaPost.Description = updated.Description
 	mediaPost.Title = updated.Title
 	mediaPost.PaymentQuantity = updated.PaymentQuantity
-	mediaPost.JobType = updated.JobType
+	mediaPost.Category = updated.Category
 	mediaPost.LastModification = time.Now()
 
 	db.Save(mediaPost)
@@ -220,6 +165,6 @@ func PatchMediaPostQuery(id string, r *http.Request) ([]byte, error) {
 // Revised
 func DeleteMediaObjectQuery(id string) error {
 	var mediaPost MediaPost
-	 _ = db.Where("id=?", id).Delete(&mediaPost)
+	_ = db.Where("id=?", id).Delete(&mediaPost)
 	return nil
 }

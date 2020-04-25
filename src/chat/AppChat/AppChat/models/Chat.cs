@@ -7,7 +7,7 @@ namespace AppChat.models
     public class UserData
     {
         [JsonPropertyName("id")] public string Id { get; set; }
-        [JsonPropertyName("first_name")]public string first_name { get; set; }
+        [JsonPropertyName("username")] public string UserName { get; set; }
         [JsonPropertyName("image")] public string Image { get; set; }
     }
 

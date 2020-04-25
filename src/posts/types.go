@@ -14,16 +14,16 @@ type Middleware func(handlerFunc http.HandlerFunc) http.HandlerFunc
 // Table declaration
 
 type UserData struct {
-	ID        string `json:"id"`
-	Image     string `json:"image"`
-	FirstName string `json:"first_name"`
+	ID       string `json:"id"`
+	Image    string `json:"image"`
+	UserName string `json:"username"`
 }
 
 type MediaPost struct {
 	ID               uuid.UUID `json:"id";gorm:"primary_key"`
 	CreatorId        string    `json:"creator_id";gorm:"not null"`
-	IsService        bool      `json:"is_service";gorm:"not null"`
-	JobType          string    `json:"job_type";gorm:"not null"`
+	PostType         string      `json:"post_type";gorm:"not null"`
+	Category         string    `json:"category";gorm:"not null"`
 	Title            string    `json:"title";gorm:"not null"`
 	Description      string    `json:"description";gorm:"not null"`
 	PaymentQuantity  float32   `json:"payment_quantity"`

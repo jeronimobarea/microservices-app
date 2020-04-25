@@ -7,8 +7,6 @@ from pydantic import BaseModel
 # Utils
 from typing import Optional, List
 
-from pydantic import BaseModel as PydanicModel
-
 """
 Here we declare all the schemas that we want for retrieving data from 
 the Profile model
@@ -16,8 +14,6 @@ the Profile model
 
 
 # Models
-
-
 class ProfileBase(BaseModel):
     email: str
 
@@ -29,7 +25,7 @@ class ProfileCreate(ProfileBase):
 class BasicProfile(BaseModel):
     id: str
     image: Optional[str] = None
-    first_name: Optional[str] = None
+    username: Optional[str] = None
 
     class Config:
         orm_mode = True
@@ -37,16 +33,13 @@ class BasicProfile(BaseModel):
 
 class Profile(ProfileBase):
     id: str
-    image: Optional[str] = None
-    cover: Optional[str] = None
-    email: Optional[str] = None
-    first_name: Optional[str] = None
-    last_name: Optional[str] = None
-    birthday: Optional[datetime] = None
-    description: Optional[str] = None
-    is_company: Optional[bool] = None
-    web: Optional[str] = None
-    name: Optional[str] = None
+    image: Optional[str]
+    cover: Optional[str]
+    email: Optional[str]
+    username: Optional[str]
+    description: Optional[str]
+    web: Optional[str]
+    is_verified: Optional[bool]
     creation_date: Optional[datetime]
     last_modification: Optional[datetime]
 
@@ -54,11 +47,11 @@ class Profile(ProfileBase):
         orm_mode = True
 
 
-class ProfileDelete(BaseModel):
-    is_active: bool = False
+class ProfileStatus(BaseModel):
+    is_active: bool
 
 
-class Pagination(PydanicModel):
+class Pagination(BaseModel):
     page: int
     per_page: Optional[int]
     total_pages: Optional[int]

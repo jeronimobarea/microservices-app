@@ -8,9 +8,10 @@ import (
 	"strconv"
 )
 
-func GetMediaService(w http.ResponseWriter, r *http.Request) {
+func GetMediaByType(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 	perPageStr := r.URL.Query().Get("per_page")
+	postType := r.URL.Query().Get("post_type")
 
 	var page int
 	var perPage int
@@ -23,7 +24,7 @@ func GetMediaService(w http.ResponseWriter, r *http.Request) {
 		perPage, _ = strconv.Atoi(perPageStr)
 	}
 
-	response, err := GetMediaServicesQuery(page, perPage)
+	response, err := GetMediaServicesQuery(page, perPage, postType)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -32,34 +33,11 @@ func GetMediaService(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(response)
 }
 
-func GetMediaOffers(w http.ResponseWriter, r *http.Request) {
-	pageStr := r.URL.Query().Get("page")
-	perPageStr := r.URL.Query().Get("per_page")
-
-	var page int
-	var perPage int
-
-	if pageStr == "" || perPageStr == "" {
-		page = 0
-		perPage = 10
-	} else {
-		page, _ = strconv.Atoi(pageStr)
-		perPage, _ = strconv.Atoi(perPageStr)
-	}
-
-	response, err := GetMediaOffersQuery(page, perPage)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write(response)
-}
-
-func GetUserMediaOffers(w http.ResponseWriter, r *http.Request) {
+func GetUserPostByType(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 	perPageStr := r.URL.Query().Get("per_page")
 	id := r.URL.Query().Get("id")
+	postType := r.URL.Query().Get("post_type")
 
 	var page int
 	var perPage int
@@ -72,7 +50,7 @@ func GetUserMediaOffers(w http.ResponseWriter, r *http.Request) {
 		perPage, _ = strconv.Atoi(perPageStr)
 	}
 
-	response, err := GetUserMediaOffersQuery(page, perPage, id)
+	response, err := GetUserMediaFilterQuery(page, perPage, postType, id)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
@@ -81,35 +59,11 @@ func GetUserMediaOffers(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(response)
 }
 
-func GetUserMediaServices(w http.ResponseWriter, r *http.Request) {
-	pageStr := r.URL.Query().Get("page")
-	perPageStr := r.URL.Query().Get("per_page")
-	id := r.URL.Query().Get("id")
-
-	var page int
-	var perPage int
-
-	if pageStr == "" || perPageStr == "" {
-		page = 0
-		perPage = 10
-	} else {
-		page, _ = strconv.Atoi(pageStr)
-		perPage, _ = strconv.Atoi(perPageStr)
-	}
-
-	response, err := GetUserMediaServicesQuery(page, perPage, id)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write(response)
-}
-
-func GetOffersFilteredMedia(w http.ResponseWriter, r *http.Request) {
+func GetPostsFilteredByCategory(w http.ResponseWriter, r *http.Request) {
 	pageStr := r.URL.Query().Get("page")
 	perPageStr := r.URL.Query().Get("per_page")
 	category := r.URL.Query().Get("category")
+	postType := r.URL.Query().Get("post_type")
 
 	var page int
 	var perPage int
@@ -122,32 +76,7 @@ func GetOffersFilteredMedia(w http.ResponseWriter, r *http.Request) {
 		perPage, _ = strconv.Atoi(perPageStr)
 	}
 
-	response, err := FilterOffersByCategory(page, perPage, category)
-	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	_, _ = w.Write(response)
-}
-
-func GetServicesFilteredMedia(w http.ResponseWriter, r *http.Request) {
-	pageStr := r.URL.Query().Get("page")
-	perPageStr := r.URL.Query().Get("per_page")
-	category := r.URL.Query().Get("category")
-
-	var page int
-	var perPage int
-
-	if pageStr == "" || perPageStr == "" {
-		page = 0
-		perPage = 10
-	} else {
-		page, _ = strconv.Atoi(pageStr)
-		perPage, _ = strconv.Atoi(perPageStr)
-	}
-
-	response, err := FilterServicesByCategory(page, perPage, category)
+	response, err := FilterPostTypeByCategory(page, perPage, postType, category)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return

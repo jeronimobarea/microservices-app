@@ -1,8 +1,4 @@
 # Fast Api
-import json
-import uuid
-from typing import List
-
 from fastapi import UploadFile, File
 from fastapi.encoders import jsonable_encoder
 
@@ -13,29 +9,18 @@ from sqlalchemy.orm import Session
 from src import models, schemas
 
 # Utils
-from datetime import datetime
+import datetime
+import uuid
+from typing import List
 
 # CRUD methods
 from src.utils import get_paginator
 
 # Firebase
-import pyrebase
-
 from google.cloud import storage
 import os
 
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "app-from-idea-to-code-firebase-adminsdk-ka5lc-ff4abf8221.json"
-
-config = {
-    "apiKey": "apiKey",
-    "authDomain": "projectId.firebaseapp.com",
-    "databaseURL": "https://app-from-idea-to-code.firebaseio.com/",
-    "storageBucket": "app-from-idea-to-code.appspot.com",
-    "serviceAccount": "app-from-idea-to-code-firebase-adminsdk-ka5lc-ff4abf8221.json"
-}
-
-pyfirebase = pyrebase.initialize_app(config)
-pystorage = pyfirebase.storage()
 
 client = storage.Client().from_service_account_json("app-from-idea-to-code-firebase-adminsdk-ka5lc-ff4abf8221.json")
 bucket = client.get_bucket("app-from-idea-to-code.appspot.com")
@@ -112,12 +97,10 @@ def create_profile(db: Session, profile: schemas.ProfileCreate):
     :param profile:
     :return:
     """
-    db_profile = models.Profile(email=profile.email, is_active=True)
+    db_profile = models.Profile(email=profile.email, is_active=True, username=profile.email)
     db.add(db_profile)
     db.commit()
     db.refresh(db_profile)
-    # backup_service = ''
-    # response = requests.post(url=backup_service, data=jsonable_encoder(db_profile))
     return db_profile
 
 
@@ -153,24 +136,40 @@ def upload_image(profile_id: str, db: Session, file: UploadFile = File(...)):
     """
     stored = db.query(models.Profile).filter(models.Profile.id == profile_id).first()
 
-    image_name = str(uuid.uuid4()) + '.png'
+    image_name = str(uuid.uuid4().hex) + '.png'
     image_blob = bucket.blob('profiles/pictures/' + image_name)
-
     image_blob.upload_from_string(
         file.file.read(),
         content_type='image/png'
     )
+    image_blob.make_public()
+    url = image_blob.public_url  # image_blob.generate_signed_url(datetime.timedelta(seconds=300), method='GET')
+    stored.image = url
+    db.commit()
+    return stored
 
-    # pystorage.child('profiles/pictures/' + image_name).put(file.file.read())
-    stored.image = pystorage.child('profiles/pictures/' + image_name).get_url(None)
-    """image_name = str(uuid.uuid4()) + '.png'
-    file.content_type = "image/png"
-    print(file.file.read())
-    storage.child('profiles/pictures/' + image_name).put(file.file.read())
-    stored.image = storage.child('profiles/pictures/' + image_name).get_url(None)"""
+
+def upload_cover(profile_id: str, db: Session, file: UploadFile = File(...)):
+    """
+
+    :param db:
+    :param file:
+    :param profile_id:
+    :return:
+    """
+    stored = db.query(models.Profile).filter(models.Profile.id == profile_id).first()
+
+    image_name = str(uuid.uuid4().hex) + '.png'
+    image_blob = bucket.blob('profiles/covers/' + image_name)
+    image_blob.upload_from_string(
+        file.file.read(),
+        content_type='image/png'
+    )
+    image_blob.make_public()
+    url = image_blob.public_url  # image_blob.generate_signed_url(datetime.timedelta(seconds=300), method='GET')
+    stored.cover = url
 
     db.commit()
-
     return stored
 
 
@@ -181,7 +180,6 @@ def update_profile(db: Session, profile: schemas.Profile):
     3º Exclude de fields that are empty.
     4º Assign the new data to the existent schema.
     5º Get the raw model and add the fields.
-    :param file:
     :param db:
     :param profile:
     :return:
@@ -193,24 +191,13 @@ def update_profile(db: Session, profile: schemas.Profile):
     updated_profile = stored_profile_model.copy(update=update_data)
     stored = db.query(models.Profile).filter(models.Profile.id == profile.id).first()
 
-    """if updated_profile.image is not None:
-        image_name = str(uuid.uuid4()) + '.png'
-        storage.child('profiles/pictures/' + image_name).put(updated_profile.image)
-        stored.image = storage.child('profiles/pictures/' + image_name).get_url(None)
-    if updated_profile.cover is not None:
-        cover_name = str(uuid.uuid4()) + '.png'
-        storage.child('profiles/covers/' + cover_name).put(updated_profile.cover)
-        stored.cover = storage.child('profiles/pictures/' + cover_name).get_url(None)"""
-
-    stored.first_name = updated_profile.first_name
-    stored.last_name = updated_profile.last_name
+    stored.username = updated_profile.username
     stored.email = updated_profile.email
     stored.birthday = updated_profile.birthday
     stored.description = updated_profile.description
-    stored.name = updated_profile.name
     stored.web = updated_profile.web
     stored.is_company = updated_profile.is_company
-    stored.last_modification = datetime.utcnow()
+    stored.last_modification = datetime.datetime.utcnow()
 
     db.commit()
     return updated_profile

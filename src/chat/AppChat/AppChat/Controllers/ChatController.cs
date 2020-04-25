@@ -11,7 +11,6 @@ using AppChat.Queries;
 using AppChat.Response;
 using AppChat.utils;
 using AutoMapper;
-using FireSharp.Config;
 using FireSharp.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
@@ -29,21 +28,10 @@ namespace AppChat.Controllers
         private readonly Utils _utils = new Utils();
         private static readonly HttpClient client = new HttpClient();
 
-        private readonly IFirebaseConfig _firebaseConfig = new FirebaseConfig
-        {
-            AuthSecret = "74fpIphhf7mdRApMbs5kkdGJQ1IyaKFcsjCdKNb4",
-            BasePath = "https://app-from-idea-to-code.firebaseio.com/"
-        };
-
         public ChatController(ApplicationContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
-            _firebaseClient = new FireSharp.FirebaseClient(_firebaseConfig);
-
-            Console.WriteLine(_firebaseClient != null
-                ? "Firebase connection successful"
-                : "Error in firebase connection");
         }
 
         [HttpGet("user/active")]
@@ -54,6 +42,7 @@ namespace AppChat.Controllers
             var chatResponse = _context.Chats
                 .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
                 .Where(c => c.Status.Equals("1"))
+                .Where(c => c.IsBlocked == false)
                 .OrderBy(c => c.CreationDate)
                 .ToList()
                 .Skip(paginationFilter.Page)
@@ -68,7 +57,6 @@ namespace AppChat.Controllers
                 TotalPages = totalPages / paginationFilter.PerPage,
                 HasNext = (totalPages / paginationFilter.PerPage) > paginationFilter.Page ? true : false
             };
-
             return Ok(paginationResponse);
         }
 
@@ -78,7 +66,9 @@ namespace AppChat.Controllers
             var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
             var totalPages = _context.Chats.Count(c => c.Id != null);
             var chatResponse = _context.Chats
-                .Where(c => c.ChatCreator == userId || c.RequestedUser == userId).Where(c => c.Status.Equals("0"))
+                .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
+                .Where(c => c.Status.Equals("0"))
+                .Where(c => c.IsBlocked == false)
                 .OrderBy(c => c.CreationDate)
                 .ToList()
                 .Skip(paginationFilter.Page)
@@ -97,20 +87,34 @@ namespace AppChat.Controllers
             return Ok(paginationResponse);
         }
 
-        [HttpGet("active")]
-        public IEnumerable<Chat> GetActiveChats()
+        [HttpGet("user/blocked")]
+        public OkObjectResult GetBlockedUserChats([FromQuery] PaginationQuery paginationQuery, string userId)
         {
-            return _context.Chats.Where(c => c.IsBlocked == false);
-        }
+            var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
+            var totalPages = _context.Chats.Count(c => c.Id != null);
+            var chatResponse = _context.Chats
+                .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
+                .Where(c => c.IsBlocked == true)
+                .OrderBy(c => c.CreationDate)
+                .ToList()
+                .Skip(paginationFilter.Page)
+                .Take(paginationFilter.PerPage);
 
-        [HttpGet("blocked")]
-        public IEnumerable<Chat> GetBlockedChats()
-        {
-            return _context.Chats.Where(c => c.IsBlocked);
+            var filledChat = _utils.fillChatData(chatResponse.ToList());
+
+            var paginationResponse = new PagedResponse<Chat>(filledChat.Result.ToList())
+            {
+                Page = paginationFilter.Page,
+                PerPage = paginationFilter.PerPage,
+                TotalPages = totalPages / paginationFilter.PerPage,
+                HasNext = (totalPages / paginationFilter.PerPage) > paginationFilter.Page ? true : false
+            };
+
+            return Ok(paginationResponse);
         }
 
         [HttpGet("/{id}")]
-        public async Task<OkObjectResult> Get([FromQuery] string id)
+        public async Task<OkObjectResult> GetById([FromQuery] string id)
         {
             var chat = await _context.FindAsync<Chat>(Guid.Parse(id));
 
@@ -147,7 +151,7 @@ namespace AppChat.Controllers
         }
 
         [HttpPost]
-        public async Task<OkObjectResult> Post([FromBody] Chat chat)
+        public async Task<OkObjectResult> CreateChat([FromBody] Chat chat)
         {
             chat.CreationDate = DateTime.UtcNow;
             chat.LastModification = DateTime.UtcNow;
@@ -166,7 +170,7 @@ namespace AppChat.Controllers
         }
 
         [HttpPatch("accept")]
-        public async Task<OkObjectResult> AcceptChat(string id)
+        public async Task<OkObjectResult> AcceptChat([FromQuery] string id)
         {
             var chat = await _context.FindAsync<Chat>(Guid.Parse(id));
 
@@ -178,7 +182,7 @@ namespace AppChat.Controllers
         }
 
         [HttpPatch("decline")]
-        public async Task<OkObjectResult> DeclineChat(string id)
+        public async Task<OkObjectResult> DeclineChat([FromQuery] string id)
         {
             var chat = await _context.FindAsync<Chat>(Guid.Parse(id));
 
@@ -188,6 +192,30 @@ namespace AppChat.Controllers
             await _context.SaveChangesAsync();
 
             return Ok("Chat declined");
+        }
+
+        [HttpPatch("block")]
+        public async Task<OkObjectResult> BlockChat([FromQuery] string id)
+        {
+            var chat = await _context.FindAsync<Chat>(Guid.Parse(id));
+
+            chat.IsBlocked = true;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Chat blocked");
+        }
+
+        [HttpPatch("unblock")]
+        public async Task<OkObjectResult> UnblockChat([FromQuery] string id)
+        {
+            var chat = await _context.FindAsync<Chat>(Guid.Parse(id));
+
+            chat.IsBlocked = false;
+
+            await _context.SaveChangesAsync();
+
+            return Ok("Chat unblocked");
         }
     }
 }

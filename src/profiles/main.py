@@ -61,7 +61,6 @@ def read_root():
     return RedirectResponse('/profiles/')
 
 
-# Revised
 @app.post("/profiles/", response_model=schemas.Profile, tags=['Profiles'])
 def create_profile(profile: schemas.ProfileCreate, db: Session = Depends(get_db)):
     """
@@ -102,7 +101,6 @@ def create_profile(profile: schemas.ProfileCreate, db: Session = Depends(get_db)
     return account
 
 
-# Revised
 @app.get("/profiles/", response_model=schemas.Pagination, tags=['Profiles'])
 def read_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db)):
     """
@@ -114,10 +112,11 @@ def read_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db))
     :return:
     """
     profiles = crud.get_profiles(db, page=pagination.page, per_page=pagination.per_page, )
+    if profiles is None:
+        raise HTTPException(status_code=500, detail="Internal server error, could not find the specification")
     return profiles
 
 
-# Revised
 @app.get("/profiles/basic/list/", response_model=List[schemas.BasicProfile], tags=['Profiles'])
 def basic_list_data(profiles_id: List[str], db: Session = Depends(get_db)):
     """
@@ -127,10 +126,11 @@ def basic_list_data(profiles_id: List[str], db: Session = Depends(get_db)):
     :return:
     """
     data = crud.get_profile_list_by_id(db=db, profiles_id=profiles_id)
+    if data is None:
+        raise HTTPException(status_code=500, detail="Internal server error, could not find the specification")
     return data
 
 
-# Revised
 @app.get("/profiles/basic/{profile_id}", response_model=schemas.BasicProfile, tags=['Profiles'])
 def basic_data(profile_id: str, db: Session = Depends(get_db)):
     """
@@ -140,10 +140,11 @@ def basic_data(profile_id: str, db: Session = Depends(get_db)):
     :return:
     """
     data = crud.get_basic_data(db=db, profile_id=profile_id, )
+    if data is None:
+        raise HTTPException(status_code=500, detail="Internal server error, could not find the specification")
     return data
 
 
-# Revised
 @app.get("/profiles/active/", response_model=schemas.Pagination, tags=['Profiles'])
 def read_active_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db)):
     """
@@ -155,10 +156,11 @@ def read_active_profiles(pagination: schemas.Pagination, db: Session = Depends(g
     :return:
     """
     profiles = crud.get_active_profiles(db, page=pagination.page, per_page=pagination.per_page, )
+    if profiles is None:
+        raise HTTPException(status_code=500, detail="Internal server error, could not find the specification")
     return profiles
 
 
-# Revised
 @app.get("/profiles/inactive/", response_model=schemas.Pagination, tags=['Profiles'])
 def read_inactive_profiles(pagination: schemas.Pagination, db: Session = Depends(get_db)):
     """
@@ -170,10 +172,11 @@ def read_inactive_profiles(pagination: schemas.Pagination, db: Session = Depends
     :return:
     """
     profiles = crud.get_inactive_profiles(db, page=pagination.page, per_page=pagination.per_page, )
+    if profiles is None:
+        raise HTTPException(status_code=500, detail="Internal server error, could not find the specification")
     return profiles
 
 
-# Revised
 @app.get("/profiles/{profile_id}", response_model=schemas.Profile, tags=['Profiles'])
 def read_profile(profile_id: str, db: Session = Depends(get_db)):
     """
@@ -199,11 +202,12 @@ def update_picture(profile_id: str, file: UploadFile = File(...), db: Session = 
     :param db:
     :return:
     """
-    data = crud.upload_image(db=db, profile_id=profile_id, file=file)
-    return data
+    picture = crud.upload_image(db=db, profile_id=profile_id, file=file)
+    if picture is None:
+        raise HTTPException(status_code=500, detail="Error uploading the image")
+    return picture
 
 
-# Revised
 @app.patch("/profiles/", response_model=schemas.Profile, tags=['Profiles'])
 def update_profile(profile: schemas.Profile, db: Session = Depends(get_db)):
     """
@@ -221,8 +225,7 @@ def update_profile(profile: schemas.Profile, db: Session = Depends(get_db)):
     return db_profile
 
 
-# Revised
-@app.patch("/profiles/deactivate/{profile_id}", response_model=schemas.ProfileDelete, tags=['Profiles'])
+@app.patch("/profiles/deactivate/{profile_id}", response_model=schemas.ProfileStatus, tags=['Profiles'])
 def deactivate_profile(profile_id: str, db: Session = Depends(get_db)):
     """
     Calls the crud function deactivate() and send the parameters it needs,
@@ -238,8 +241,7 @@ def deactivate_profile(profile_id: str, db: Session = Depends(get_db)):
     return db_profile
 
 
-# Revised
-@app.patch("/profiles/activate/{profile_id}", response_model=schemas.ProfileDelete, tags=['Profiles'])
+@app.patch("/profiles/activate/{profile_id}", response_model=schemas.ProfileStatus, tags=['Profiles'])
 def activate_profile(profile_id: str, db: Session = Depends(get_db)):
     """
     Calls the crud function activate() and send the parameters it needs,

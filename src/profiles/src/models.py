@@ -3,6 +3,7 @@ from datetime import datetime
 
 # Sql Alchemy
 from sqlalchemy import Column, String, DateTime, Boolean
+from sqlalchemy.dialects.postgresql import UUID
 
 # Database
 from src.database import Base
@@ -18,21 +19,14 @@ class Profile(Base):
     """
     __tablename__ = "profiles"
 
-    id = Column(String, primary_key=True, default=lambda: uuid.uuid4().hex)
+    id = Column(String, primary_key=True, default=str(uuid.uuid4()), unique=True, nullable=False)
     image = Column(String, nullable=True)
     cover = Column(String, nullable=True)
     email = Column(String, unique=True)
-    first_name = Column(String, nullable=True)
-    last_name = Column(String, nullable=True)
-    birthday = Column(DateTime, nullable=True)
+    username = Column(String, nullable=True, unique=True, default=email)
     description = Column(String, nullable=True)
-    is_company = Column(String, nullable=True, default=False)
-    name = Column(String, nullable=True)
     web = Column(String, nullable=True)
+    is_verified = Column(String, nullable=True, default=False)
     is_active = Column(Boolean, default=True, nullable=True)
     creation_date = Column(DateTime, default=datetime.utcnow())
     last_modification = Column(DateTime, default=datetime.utcnow())
-
-    __mapper_args__ = {
-        'polymorphic_identity': 'profiles'
-    }

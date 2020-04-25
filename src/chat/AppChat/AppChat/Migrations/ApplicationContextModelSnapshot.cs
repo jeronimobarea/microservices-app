@@ -28,13 +28,13 @@ namespace AppChat.Migrations
                     b.Property<string>("ChatCreator")
                         .HasColumnType("text");
 
-                    b.Property<DateTime>("CreationDate")
+                    b.Property<DateTime?>("CreationDate")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<bool>("IsBlocked")
                         .HasColumnType("boolean");
 
-                    b.Property<DateTime>("LastModification")
+                    b.Property<DateTime?>("LastModification")
                         .HasColumnType("timestamp without time zone");
 
                     b.Property<string>("RequestedUser")
