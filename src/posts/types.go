@@ -17,6 +17,7 @@ type UserData struct {
 	ID       string `json:"id"`
 	Image    string `json:"image"`
 	UserName string `json:"username"`
+	DeviceId string `json:"device_id"`
 }
 
 type MediaPost struct {

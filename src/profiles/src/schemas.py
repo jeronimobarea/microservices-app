@@ -33,6 +33,7 @@ class BasicProfile(BaseModel):
 
 class Profile(ProfileBase):
     id: str
+    device_id: Optional[str]
     image: Optional[str]
     cover: Optional[str]
     email: Optional[str]

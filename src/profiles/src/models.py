@@ -2,8 +2,7 @@
 from datetime import datetime
 
 # Sql Alchemy
-from sqlalchemy import Column, String, DateTime, Boolean
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import Column, String, DateTime, Boolean, ForeignKey
 
 # Database
 from src.database import Base
@@ -20,10 +19,11 @@ class Profile(Base):
     __tablename__ = "profiles"
 
     id = Column(String, primary_key=True, default=str(uuid.uuid4()), unique=True, nullable=False)
+    device_id = Column(String, nullable=True)
     image = Column(String, nullable=True)
     cover = Column(String, nullable=True)
     email = Column(String, unique=True)
-    username = Column(String, nullable=True, unique=True, default=email)
+    username = Column(String, nullable=True, default=email)
     description = Column(String, nullable=True)
     web = Column(String, nullable=True)
     is_verified = Column(String, nullable=True, default=False)

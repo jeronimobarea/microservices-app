@@ -193,11 +193,9 @@ def update_profile(db: Session, profile: schemas.Profile):
 
     stored.username = updated_profile.username
     stored.email = updated_profile.email
-    stored.birthday = updated_profile.birthday
     stored.description = updated_profile.description
     stored.web = updated_profile.web
-    stored.is_company = updated_profile.is_company
-    stored.last_modification = datetime.datetime.utcnow()
+    stored.last_modification = datetime.datetime.now()
 
     db.commit()
     return updated_profile

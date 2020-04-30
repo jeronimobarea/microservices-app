@@ -9,6 +9,7 @@ namespace AppChat.models
         [JsonPropertyName("id")] public string Id { get; set; }
         [JsonPropertyName("username")] public string UserName { get; set; }
         [JsonPropertyName("image")] public string Image { get; set; }
+        [JsonPropertyName("device_id")] public string DeviceId { get; set; }
     }
 
     public class Chat

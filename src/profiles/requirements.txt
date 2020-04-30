@@ -8,7 +8,8 @@ async-generator
 requests~=2.23.0
 uuid~=1.30
 starlette~=0.13.2
-requests
 Pyrebase~=3.0.27
 google-cloud
 Pillow~=7.1.1
+psycopg2-binary
+google-cloud-storage

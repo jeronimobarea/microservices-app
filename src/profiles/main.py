@@ -5,7 +5,7 @@ import uvicorn
 from typing import List
 
 # Fast Api
-from fastapi import FastAPI, HTTPException, Depends, Request, Response, Query, UploadFile
+from fastapi import FastAPI, HTTPException, Depends, UploadFile
 
 # SQL Alchemy
 from fastapi.params import File
