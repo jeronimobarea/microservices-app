@@ -11,6 +11,10 @@ from src.database import Base
 import uuid
 
 
+def generate_uuid():
+    return str(uuid.uuid4())
+
+
 # Models
 class Profile(Base):
     """
@@ -18,7 +22,7 @@ class Profile(Base):
     """
     __tablename__ = "profiles"
 
-    id = Column(String, primary_key=True, default=str(uuid.uuid4()), unique=True, nullable=False)
+    id = Column(String, primary_key=True, default=generate_uuid())
     device_id = Column(String, nullable=True)
     image = Column(String, nullable=True)
     cover = Column(String, nullable=True)

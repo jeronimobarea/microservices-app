@@ -26,6 +26,7 @@ class BasicProfile(BaseModel):
     id: str
     image: Optional[str] = None
     username: Optional[str] = None
+    device_id: Optional[str] = None
 
     class Config:
         orm_mode = True

@@ -195,6 +195,7 @@ def update_profile(db: Session, profile: schemas.Profile):
     stored.email = updated_profile.email
     stored.description = updated_profile.description
     stored.web = updated_profile.web
+    stored.device_id = updated_profile.device_id
     stored.last_modification = datetime.datetime.now()
 
     db.commit()
