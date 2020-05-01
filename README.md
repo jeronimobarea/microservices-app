@@ -27,8 +27,8 @@ Hope you like the project!
 > > > 📂**Posts**
 > > > > *This API is programmed in Go and it hosts all the posts data and store it in a postgresql database.*
 > > >
-> > > 📂**Backup**
-> > > > *This API is programmed in Node.js it get's all the new data and change's from the other API's and storage it in a firestore database.*
+> > > 📂**Notifications**
+> > > > *This API is programmed in Scala with SLICK and PLAY it get's the notifications and sends it to the specified device.*
 
 
 ![Alt text][id]
