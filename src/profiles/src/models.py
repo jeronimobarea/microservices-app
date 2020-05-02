@@ -22,7 +22,7 @@ class Profile(Base):
     """
     __tablename__ = "profiles"
 
-    id = Column(String, primary_key=True, default=generate_uuid())
+    id = Column(String, primary_key=True, unique=True, default=lambda: uuid.uuid4().hex)
     device_id = Column(String, nullable=True)
     image = Column(String, nullable=True)
     cover = Column(String, nullable=True)
