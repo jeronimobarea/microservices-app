@@ -11,23 +11,22 @@
             [ring.middleware.json :refer [wrap-json-body]])
   (:gen-class))
 
-; Simple Body Page
-(defn simple-body-page [req]
-  (def response (client/get "http://34.76.34.119:8000/api/v1/auth/endpoints"
-                            {:accept  :json
-                             :headers {"api_key" "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"}}))
-  (def data (:body response))
+
+(defn login [req]
+  (def email (get-in req [:body "email"]))
+  (def password (get-in req [:body "password"]))
+  (def url (.concat "http://34.76.34.119:8000/api/v1/pr/profiles/email/" email))
+  (try
+    (def login-response (client/get url
+                                    {:accept     :json
+                                     :basic-auth [email password]
+                                     :headers    {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                                  "Content-Type" "application/json"}}))
+    (def profile-data (:body login-response))
+    (catch Exception e (throw e)))
   {:status  200
    :headers {"Content-Type" "application/json"}
-   :body    data})
-
-; request-example
-(defn request-example [req]
-  {:status  200
-   :headers {"Content-Type" "text/html"}
-   :body    (->>
-              (pp/pprint req)
-              (str "Request Object: " req))})
+   :body    profile-data})
 
 (defn create-user [req]
   (def email (get-in req [:body "email"]))
@@ -38,38 +37,40 @@
   (def consumer-auth (cheshire.core/generate-string {:username email :password password}))
   (def profile (cheshire.core/generate-string {:email email}))
 
-  (def consumer-response (client/post "http://34.76.34.119:8000/api/v1/auth/consumers/"
-                                      {:accept  :json
-                                       :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
-                                                 "Content-Type" "application/json"}
-                                       :body    consumer}))
 
-  (def url (.concat "http://34.76.34.119:8000/api/v1/auth/consumers/" email))
-  (def final-url (.concat url "/basic-auth"))
+  (try
+    (def consumer-response (client/post "http://34.76.34.119:8000/api/v1/auth/consumers/"
+                                        {:accept  :json
+                                         :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                                   "Content-Type" "application/json"}
+                                         :body    consumer}))
 
-  (def auth-response (client/post final-url
-                                  {:accept  :json
-                                   :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
-                                             "Content-Type" "application/json"}
-                                   :body    consumer-auth}))
 
-  (def profile-response (client/post "http://34.76.34.119:8000/api/v1/pr/profiles/"
-                                     {:accept  :json
-                                      :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
-                                                "Content-Type" "application/json"}
-                                      :body    profile}))
+    (def url (.concat "http://34.76.34.119:8000/api/v1/auth/consumers/" email))
+    (def final-url (.concat url "/basic-auth"))
 
-  (def profile-data (:body profile-response))
+    (def auth-response (client/post final-url
+                                    {:accept  :json
+                                     :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                               "Content-Type" "application/json"}
+                                     :body    consumer-auth}))
 
+    (def profile-response (client/post "http://34.76.34.119:8000/api/v1/pr/profiles/"
+                                       {:accept  :json
+                                        :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                                  "Content-Type" "application/json"}
+                                        :body    profile}))
+
+    (def profile-data (:body profile-response))
+    (catch Exception e (throw e)))
   {:status  200
    :headers {"Content-Type" "application/json"}
    :body    profile-data})
 
 
 (defroutes app-routes
-           (GET "/" [] simple-body-page)
-           (GET "/request" [] request-example)
            (POST "/register" [] create-user)
+           (POST "/login" [] login)
            (route/not-found "Error, page not found!"))
 (defn -main
   "This is our main entry point"
