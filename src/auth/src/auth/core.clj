@@ -56,10 +56,11 @@
                                      :body    consumer-auth}))
 
     (def profile-response (client/post "http://34.76.34.119:8000/api/v1/pr/profiles/"
-                                       {:accept  :json
-                                        :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
-                                                  "Content-Type" "application/json"}
-                                        :body    profile}))
+                                       {:accept     :json
+                                        :basic-auth [email password]
+                                        :headers    {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                                     "Content-Type" "application/json"}
+                                        :body       profile}))
 
     (def profile-data (:body profile-response))
     (catch Exception e (throw e)))
