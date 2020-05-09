@@ -19,7 +19,7 @@ First of all the project is hosted in a Google Cloud Platform VM, running in ubu
 PostgreSQL databases are running in a Google Cloud Platform Cloud SQL, the storage is hosted with Firebase Storage and
 the NoSQL database is hosted with Firebase Realtime Database.
 
-The github project is configured for localhost, the kong server will run by defualt in [http://localhost:8000] (http://localhost:8000),
+The github project is configured for localhost, the kong server will run by defualt in [localhost](http://localhost:8000),
 all the other services will go in localhost.
 
 | service | host | port |
