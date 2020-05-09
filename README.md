@@ -2,7 +2,7 @@
 
 __Advertisement :)__
 
-- This is my "Superior Grade" (don't know how it's called in your country) project it's not professional or nothing similar, it's just my try to learn new tech and introduce my self into micro services. This porject was made with me during an intership 
+- This is my "Superior Grade" (don't know how it's called in your country) project it's not professional or nothing similar, it's just my try to learn new tech and introduce my self into micro services. This project was made with me during an intership 
 in a company so i didn't have much time to make this with all i wanted to do, so i will be updating it in my free time adding 
 better error handling and Oauth2 support.
 - Feel free to use copy or send me feedback!
