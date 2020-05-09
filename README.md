@@ -25,7 +25,7 @@ all the other services will go in localhost.
 | service | host | port |
 |---------|------|------|
 | kong | http://localhost | :8000 |
-| kong | http://localhost | :1337 |
+| konga | http://localhost | :1337 |
 | auth | http://localhost | :3002 |
 | profile | http://localhost | :8100 | 
 | chat | http://localhost | :5000 |
