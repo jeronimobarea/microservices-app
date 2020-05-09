@@ -24,8 +24,8 @@ all the other services will go in localhost.
 
 | service | host | port |
 |---------|------|------|
-| auth | http://localhost | :30002 |
-| profile | http://localhost | :81000 | 
+| auth | http://localhost | :3002 |
+| profile | http://localhost | :8100 | 
 | chat | http://localhost | :5000 |
 | posts | http://localhost | :3000 |
 | notifications | http://localhost | :9000 |
