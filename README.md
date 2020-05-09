@@ -1,6 +1,5 @@
 # microservices app
 
----
 __Advertisement :)__
 
 - This is my "Superior Grade" (don't know how it's called in your country) project it's not professional or nothing similar, it's just my try to learn new tech and introduce my self into micro services. This porject was made with me during an intership 
@@ -10,10 +9,8 @@ better error handling and Oauth2 support.
 
 Hope you like the project!
 
----
 
 ## Project Structure
----
 
 First of all the project is hosted in a Google Cloud Platform VM, running in ubuntu 18.04lts, and the 
 PostgreSQL databases are running in a Google Cloud Platform Cloud SQL, the storage is hosted with Firebase Storage and
