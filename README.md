@@ -19,12 +19,24 @@ First of all the project is hosted in a Google Cloud Platform VM, running in ubu
 PostgreSQL databases are running in a Google Cloud Platform Cloud SQL, the storage is hosted with Firebase Storage and
 the NoSQL database is hosted with Firebase Realtime Database.
 
+The github project is configured for localhost, the kong server will run by defualt in [http://localhost:8000],
+all the other services will go in localhost.
+
+| service | host | port |
+|---------|------|------|
+| auth | http://localhost | :30002 |
+| profile | http://localhost | :81000 | 
+| chat | http://localhost | :5000 |
+| posts | http://localhost | :3000 |
+| notifications | http://localhost | :9000 |
+
+
 > 📂**Server**
 > > 📂**Kong**
-> > > *I use Kong for handling the routing (Kong uses Nginx) and the auth, you can also handle logging, trafic etc.*
+> > > *I use Kong for handling the routing (Kong uses Nginx) and the auth, you can also handle logging, trafic etc. For easy configuration i use Konga UI*
 > >
 > > 📂**src*
-> > > > 📂**Auth**
+> > > 📂**Auth**
 > > > > *This API is programmed using compojure framework (Clojure) it basically call's to kong for creating the Basic Auth of the user and sends other petition to the profiles API for creating a profile for that user.*
 > > >
 > > > 📂**Profile**
