@@ -37,7 +37,7 @@ all the other services will go in localhost.
 > > 📂**Kong**
 > > > *I use Kong for handling the routing (Kong uses Nginx) and the auth, you can also handle logging, trafic etc. For easy configuration i use Konga UI*
 > >
-> > 📂**src*
+> > 📂**src**
 > > > 📂**Auth**
 > > > > *This API is programmed using compojure framework (Clojure) it basically call's to kong for creating the Basic Auth of the user and sends other petition to the profiles API for creating a profile for that user.*
 > > >
