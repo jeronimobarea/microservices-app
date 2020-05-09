@@ -44,7 +44,55 @@ the NoSQL database is hosted with Firebase Realtime Database.
 
 Start server
 ```
-   sudo lein run dev
+sudo lein run dev
+```
+
+## Profile API setup
+
+Install dependencies
+```
+pip install -r requirements.txt
+```
+
+Run server
+```
+uvicorn main:app --reload --port 8100
+```
+
+## Chat API setup
+Make migrations
+```
+dotnet ef migrations add {MigrationName}
+```
+
+Update database
+```
+dotnet ef database update
+```
+
+Run server
+```
+sudo dotnet run
+```
+
+## Posts
+Run server DEV
+```
+sudo go run *.go 
+```
+Run server PROD
+```
+sudo go build
+```
+Get all dependencies
+```
+go get -d ./...
+```
+
+## Notifications
+Run server
+```
+sbt run
 ```
 
 
