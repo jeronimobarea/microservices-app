@@ -31,11 +31,12 @@
 (defn create-user [req]
   (def email (get-in req [:body "email"]))
   (def password (get-in req [:body "password"]))
+  (def device_id (get-in req [:body "device_id"]))
   (def data (:body req))
 
   (def consumer (cheshire.core/generate-string {:username email}))
   (def consumer-auth (cheshire.core/generate-string {:username email :password password}))
-  (def profile (cheshire.core/generate-string {:email email}))
+  (def profile (cheshire.core/generate-string {:email email :device_id device_id}))
 
 
   (try

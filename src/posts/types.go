@@ -23,7 +23,7 @@ type UserData struct {
 type MediaPost struct {
 	ID               uuid.UUID `json:"id";gorm:"primary_key"`
 	CreatorId        string    `json:"creator_id";gorm:"not null"`
-	PostType         string      `json:"post_type";gorm:"not null"`
+	PostType         string    `json:"post_type";gorm:"not null"`
 	Category         string    `json:"category";gorm:"not null"`
 	Title            string    `json:"title";gorm:"not null"`
 	Description      string    `json:"description";gorm:"not null"`

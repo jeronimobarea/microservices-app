@@ -97,7 +97,8 @@ def create_profile(db: Session, profile: schemas.ProfileCreate):
     :param profile:
     :return:
     """
-    db_profile = models.Profile(email=profile.email, is_active=True, username=profile.email)
+    db_profile = models.Profile(email=profile.email, device_id=profile.device_id, is_active=True,
+                                username=profile.email)
     db.add(db_profile)
     db.commit()
     db.refresh(db_profile)

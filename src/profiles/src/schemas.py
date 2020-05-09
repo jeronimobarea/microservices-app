@@ -19,6 +19,7 @@ class ProfileBase(BaseModel):
 
 
 class ProfileCreate(ProfileBase):
+    device_id: Optional[str]
     pass
 
 
