@@ -7,3 +7,6 @@ password = '12345678A'
 
 database name app_profiles
 database name app_posts
+database name app_auth
+database name app_notifications
+database name app_chat
