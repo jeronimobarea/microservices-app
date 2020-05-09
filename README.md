@@ -29,6 +29,7 @@ all the other services will go in localhost.
 | posts | http://localhost | :3000 |
 | notifications | http://localhost | :9000 |
 
+##
 
 > 📂**Server**
 > > 📂**Kong**
