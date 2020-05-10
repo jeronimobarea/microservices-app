@@ -39,6 +39,11 @@ class NotificationRepository @Inject()(
     db.run(q.result.headOption)
   }
 
+  def getByUser(id: String): Future[Seq[Notification]] = {
+    val q = notificationQuery.filter(_.user === id)
+    db.run(q.result)
+  }
+
   def create(notification: Notification): Future[Option[Notification]] = {
     val insert = notificationQuery += notification
     db.run(insert)

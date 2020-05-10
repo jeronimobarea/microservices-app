@@ -107,6 +107,10 @@ sudo go build
 ```
 
 ## Notifications
+Compile api
+```
+sbt compile
+```
 Run server
 ```
 sbt run

@@ -40,6 +40,21 @@ class NotificationController @Inject()(
       }
   }
 
+  def getUserNotifications(id: String): Action[AnyContent] = Action.async {
+    notificationRepository
+      .getByUser(id)
+      .map(notifications => {
+        val j = Json.obj("data" -> notifications, "message" -> "Notifications listed")
+        Ok(j)
+      })
+      .recover {
+        case ex =>
+          logger.error("Failed at getUserNotifications", ex)
+          InternalServerError(
+            s"An error has occurred ${ex.getLocalizedMessage}")
+      }
+  }
+
   def getNotification(id: String): Action[AnyContent] = Action.async {
     notificationRepository
       .getOne(id)
@@ -102,27 +117,18 @@ class NotificationController @Inject()(
 
   }
 
-  def deleteNotification(id: String): Action[JsValue] = Action.async(parse.json) {
-    request =>
-      val validator = request.body.validate[Notification]
-
-      validator.asEither match {
-        case Left(error) => Future.successful(BadRequest(error.toString()))
-        case Right(notification) => {
-          notificationRepository
-            .delete(id)
-            .map(notification => {
-              val j = Json.obj("data" -> notification, "message" -> "Notification deleted")
-              Ok(j)
-            })
-            .recover {
-              case ex =>
-                logger.error("Failed at deleteNotification", ex)
-                InternalServerError(
-                  s"An error has occurred ${ex.getLocalizedMessage}")
-            }
-        }
+  def deleteNotification(id: String): Action[AnyContent] = Action.async {
+    notificationRepository
+      .delete(id)
+      .map(notification => {
+        val j = Json.obj("data" -> notification, "message" -> "Notification deleted")
+        Ok(j)
+      })
+      .recover {
+        case ex =>
+          logger.error("Failed at deleteNotification", ex)
+          InternalServerError(s"An error has occurred ${ex.getLocalizedMessage}")
       }
-
   }
+
 }
