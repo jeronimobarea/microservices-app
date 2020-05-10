@@ -51,6 +51,7 @@ all the other services will go in localhost.
 > > > 📂**Notifications**
 > > > > *This API is programmed in Scala with SLICK and PLAY it get's the notifications and sends it to the specified device.*
 
+![image info](C:\Users\jeron\Desktop\app-from-idea-to-code\custom – 1.png)
 
 ## Auth API setup
 
