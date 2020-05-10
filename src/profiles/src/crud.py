@@ -192,15 +192,20 @@ def update_profile(db: Session, profile: schemas.Profile):
     updated_profile = stored_profile_model.copy(update=update_data)
     stored = db.query(models.Profile).filter(models.Profile.id == profile.id).first()
 
-    stored.username = updated_profile.username
-    stored.email = updated_profile.email
-    stored.description = updated_profile.description
-    stored.web = updated_profile.web
-    stored.device_id = updated_profile.device_id
+    if updated_profile.username != '' and updated_profile.username is not None:
+        stored.username = updated_profile.username
+    if updated_profile.email != '' and updated_profile.email is not None:
+        stored.email = updated_profile.email
+    if updated_profile.description !='' and updated_profile.description is not None:
+        stored.description = updated_profile.description
+    if updated_profile.web != '' and updated_profile.web is not None:
+        stored.web = updated_profile.web
+    if updated_profile.device_id  != '' and updated_profile.device_id is not None:
+        stored.device_id = updated_profile.device_id
     stored.last_modification = datetime.datetime.now()
 
     db.commit()
-    return updated_profile
+    return stored
 
 
 def deactivate(db: Session, profile_id: str):
