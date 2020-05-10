@@ -9,15 +9,17 @@ GET     /dbInit                     controllers.HomeController.dbInit
 
 # API Notifications
 +nocsrf
-GET         /api/notifications         controllers.NotificationController.getNotifications
+GET         /notifications         controllers.NotificationController.getNotifications
 +nocsrf
-GET         /api/notifications/:id     controllers.NotificationController.getNotification(id: String)
+GET         /notifications/user/:id     controllers.NotificationController.getUserNotifications(id: String)
 +nocsrf
-POST        /api/notifications         controllers.NotificationController.createNotification
+GET         /notifications/:id     controllers.NotificationController.getNotification(id: String)
 +nocsrf
-PATCH       /api/notifications/:id     controllers.NotificationController.updateMovie(id: String)
+POST        /notifications         controllers.NotificationController.createNotification
 +nocsrf
-DELETE      /api/notifications/:id     controllers.NotificationController.deleteNotification(id: String)
+PATCH       /notifications/:id     controllers.NotificationController.updateMovie(id: String)
++nocsrf
+DELETE      /notifications/:id     controllers.NotificationController.deleteNotification(id: String)
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)
