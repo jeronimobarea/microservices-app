@@ -26,8 +26,8 @@ all the other services will go in localhost.
 | auth | http://localhost | :3002 |
 | profile | http://localhost | :8100 | 
 | chat | http://localhost | :5000 |
-| posts |http://localhost | :3000 |
-| notifications |http://localhost | :9000 |
+| posts | http://localhost | :3000 |
+| notifications | http://localhost | :9000 |
 
 ##
 
@@ -55,7 +55,11 @@ all the other services will go in localhost.
 
 ## Auth API setup
 
-Start server
+Start DEV server
+```
+sudo lein run dev
+```
+Start PROD server
 ```
 sudo lein run dev
 ```
@@ -89,6 +93,10 @@ sudo dotnet run
 ```
 
 ## Posts
+Get all dependencies
+```
+go get -d ./...
+```
 Run server DEV
 ```
 sudo go run *.go 
@@ -96,10 +104,6 @@ sudo go run *.go
 Run server PROD
 ```
 sudo go build
-```
-Get all dependencies
-```
-go get -d ./...
 ```
 
 ## Notifications
