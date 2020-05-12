@@ -97,7 +97,7 @@ namespace AppChat.config
 {
     public class ProjectConstants
     {
-        public string AuthSecret = "YOUT FIREBASE SECRET";
+        public const string AuthSecret = "YOUT FIREBASE SECRET";
         public const string BasePath = "YOUR REALTIME DATABASE URL";
     }
 }
