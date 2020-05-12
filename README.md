@@ -67,23 +67,23 @@ Create a constants.clj file in the auth core package
 ```
 
 Start DEV server
-```
+```bash
 sudo lein run dev
 ```
 Start PROD server
-```
+```bash
 sudo lein run dev
 ```
 
 ## Profile API setup
 
 Install dependencies
-```
+```bash
 pip install -r requirements.txt
 ```
 
 Run server
-```
+```bash
 uvicorn main:app --reload --port 8100
 ```
 
@@ -104,41 +104,43 @@ namespace AppChat.config
 ```
 
 Make migrations
-```
+```bash
 dotnet ef migrations add {MigrationName}
 ```
 
 Update database
-```
+```bash
 dotnet ef database update
 ```
 
 Run server
-```
+```bash
 sudo dotnet run
 ```
 
 ## Posts
+
 Get all dependencies
-```
+```bash
 go get -d ./...
-```
+```bash
 Run server DEV
-```
+```bash
 sudo go run *.go 
-```
+```bash
 Run server PROD
-```
+```bash
 sudo go build
 ```
 
 ## Notifications
+
 Compile api
-```
+```bash
 sbt compile
-```
+```bash
 Run server
-```
+```bash
 sbt run
 ```
 
