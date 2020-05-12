@@ -123,11 +123,13 @@ sudo dotnet run
 Get all dependencies
 ```bash
 go get -d ./...
-```bash
+```
+
 Run server DEV
 ```bash
 sudo go run *.go 
-```bash
+```
+
 Run server PROD
 ```bash
 sudo go build
@@ -138,7 +140,8 @@ sudo go build
 Compile api
 ```bash
 sbt compile
-```bash
+```
+
 Run server
 ```bash
 sbt run
