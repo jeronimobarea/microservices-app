@@ -1,6 +1,9 @@
 ./COMANDOS DE DOCKER.txt
 ./DATABASE CONFIGS.txt
 ./konga.zip
+src/auth/src/auth/constants.clj
+src/chat/AppChat/AppChat/config/Constants.cs
+src/profiles/app-from-idea-to-code-firebase-adminsdk-ka5lc-ff4abf8221.json
 src/posts/src/github.com/asaskevich/govalidator/
 src/posts/src/github.com/corbym/gocrest/
 src/posts/src/github.com/coreos/go-oidc/

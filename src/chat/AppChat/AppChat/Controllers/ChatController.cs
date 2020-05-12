@@ -161,11 +161,6 @@ namespace AppChat.Controllers
 
             await _context.SaveChangesAsync();
 
-            //var response = await _firebaseClient.SetTaskAsync("chat/" + chat.Id, chat);
-            //var result = response.ResultAs<Chat>();
-
-            //Console.WriteLine("Firebase chat inserted " + result.Id);
-
             return Ok(chat);
         }
 
