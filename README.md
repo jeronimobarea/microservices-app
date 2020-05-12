@@ -57,13 +57,12 @@ all the other services will go in localhost.
 
 Create a constants.clj file in the auth core package
 ```clj
-
-(ns auth.core
+(ns auth.constants
   (:gen-class))
 
-(def server-path (str "YOUR SERVER PATH"))
+(def server-path (str "YOUR SERVER URL"))
 
-(def api-key (str "YOUT SERVER API KEY"))
+(def api-key (str "YOUR SERVER API - KEY"))
 ```
 
 Start DEV server

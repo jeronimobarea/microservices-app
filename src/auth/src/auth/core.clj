@@ -9,19 +9,19 @@
             [clj-http.client :as client]
             [cheshire.core]
             [ring.middleware.json :refer [wrap-json-body]]
-            [auth.core :as constants])
+            [auth.constants :refer [api-key server-path]])
   (:gen-class))
 
 
 (defn login [req]
   (def email (get-in req [:body "email"]))
   (def password (get-in req [:body "password"]))
-  (def url (str constants/server-path "pr/profiles/email/" email))
+  (def url (str (server-path) "pr/profiles/email/" email))
   (try
     (def login-response (client/get url
                                     {:accept     :json
                                      :basic-auth [email password]
-                                     :headers    {"api_key"      constants/api_key
+                                     :headers    {"api_key"      (api-key)
                                                   "Content-Type" "application/json"}}))
     (def profile-data (:body login-response))
     (catch Exception e (throw e)))
@@ -41,24 +41,24 @@
 
 
   (try
-    (def consumer-response (client/post (str constants/server-path "auth/consumers/")
+    (def consumer-response (client/post (str (server-path) "auth/consumers/")
                                         {:accept  :json
-                                         :headers {"api_key"      constants/api_key
+                                         :headers {"api_key"      (api-key)
                                                    "Content-Type" "application/json"}
                                          :body    consumer}))
 
-    (def final-url (str constants/server-path "auth/consumers/" email url "/basic-auth"))
+    (def final-url (str (server-path) "auth/consumers/" email url "/basic-auth"))
 
     (def auth-response (client/post final-url
                                     {:accept  :json
-                                     :headers {"api_key"      constants/api_key
+                                     :headers {"api_key"      (api-key)
                                                "Content-Type" "application/json"}
                                      :body    consumer-auth}))
 
-    (def profile-response (client/post (str constants/server-path "pr/profiles/")
+    (def profile-response (client/post (str (server-path) "pr/profiles/")
                                        {:accept     :json
                                         :basic-auth [email password]
-                                        :headers    {"api_key"      constants/api_key
+                                        :headers    {"api_key"      (api-key)
                                                      "Content-Type" "application/json"}
                                         :body       profile}))
 
