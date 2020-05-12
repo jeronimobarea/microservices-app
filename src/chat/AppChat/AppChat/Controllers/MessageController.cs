@@ -19,8 +19,8 @@ namespace AppChat.Controllers
 
         private readonly IFirebaseConfig _firebaseConfig = new FirebaseConfig
         {
-            AuthSecret = "74fpIphhf7mdRApMbs5kkdGJQ1IyaKFcsjCdKNb4",
-            BasePath = "https://app-from-idea-to-code.firebaseio.com/"
+            AuthSecret = AuthSecret,
+            BasePath = BasePath
         };
 
         private readonly IFirebaseClient _firebaseClient;

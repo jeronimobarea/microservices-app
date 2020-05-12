@@ -8,19 +8,20 @@
             [clojure.data.json :as json]
             [clj-http.client :as client]
             [cheshire.core]
-            [ring.middleware.json :refer [wrap-json-body]])
+            [ring.middleware.json :refer [wrap-json-body]]
+            [auth.constants :refer [api-key server-path]])
   (:gen-class))
 
 
 (defn login [req]
   (def email (get-in req [:body "email"]))
   (def password (get-in req [:body "password"]))
-  (def url (.concat "http://34.76.34.119:8000/api/v1/pr/profiles/email/" email))
+  (def url (str (server-path) "pr/profiles/email/" email))
   (try
     (def login-response (client/get url
                                     {:accept     :json
                                      :basic-auth [email password]
-                                     :headers    {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                     :headers    {"api_key"      (api-key)
                                                   "Content-Type" "application/json"}}))
     (def profile-data (:body login-response))
     (catch Exception e (throw e)))
@@ -40,26 +41,24 @@
 
 
   (try
-    (def consumer-response (client/post "http://34.76.34.119:8000/api/v1/auth/consumers/"
+    (def consumer-response (client/post (str (server-path) "auth/consumers/")
                                         {:accept  :json
-                                         :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                         :headers {"api_key"      (api-key)
                                                    "Content-Type" "application/json"}
                                          :body    consumer}))
 
-
-    (def url (.concat "http://34.76.34.119:8000/api/v1/auth/consumers/" email))
-    (def final-url (.concat url "/basic-auth"))
+    (def final-url (str (server-path) "auth/consumers/" email url "/basic-auth"))
 
     (def auth-response (client/post final-url
                                     {:accept  :json
-                                     :headers {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                     :headers {"api_key"      (api-key)
                                                "Content-Type" "application/json"}
                                      :body    consumer-auth}))
 
-    (def profile-response (client/post "http://34.76.34.119:8000/api/v1/pr/profiles/"
+    (def profile-response (client/post (str (server-path) "pr/profiles/")
                                        {:accept     :json
                                         :basic-auth [email password]
-                                        :headers    {"api_key"      "ij8Z2ho2Dxl60kh3bcp1pfkxidhF8p3k"
+                                        :headers    {"api_key"      (api-key)
                                                      "Content-Type" "application/json"}
                                         :body       profile}))
 
