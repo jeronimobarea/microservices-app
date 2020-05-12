@@ -89,7 +89,7 @@ uvicorn main:app --reload --port 8100
 
 ## Chat API setup
 
-Create Constants.c file in the config folder
+Create Constants.cs file in the config folder
 ```cs
 using System;
 
