@@ -55,6 +55,17 @@ all the other services will go in localhost.
 
 ## Auth API setup
 
+Create a constants.clj file in the auth core package
+```clj
+
+(ns auth.core
+  (:gen-class))
+
+(def server-path (str "YOUR SERVER PATH"))
+
+(def api-key (str "YOUT SERVER API KEY"))
+```
+
 Start DEV server
 ```
 sudo lein run dev
@@ -77,6 +88,21 @@ uvicorn main:app --reload --port 8100
 ```
 
 ## Chat API setup
+
+Create Constants.c file in the config folder
+```cs
+using System;
+
+namespace AppChat.config
+{
+    public class ProjectConstants
+    {
+        public string AuthSecret = "YOUT FIREBASE SECRET";
+        public const string BasePath = "YOUR REALTIME DATABASE URL";
+    }
+}
+```
+
 Make migrations
 ```
 dotnet ef migrations add {MigrationName}
