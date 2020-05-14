@@ -30,6 +30,8 @@ all the other services will go in localhost.
 
 ##
 
+If you want to use the Konga interface to configure Kong you can download it [here](https://github.com/pantsel/konga).
+
 > 📂**Server**
 > > 📂**Kong**
 > > > *I use Kong for handling the routing (Kong uses Nginx) and the auth, you can also handle logging, trafic etc. For easy configuration i use Konga UI*
