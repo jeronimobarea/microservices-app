@@ -19,8 +19,8 @@ namespace AppChat.Controllers
 
         private readonly IFirebaseConfig _firebaseConfig = new FirebaseConfig
         {
-            AuthSecret = AuthSecret,
-            BasePath = BasePath
+            AuthSecret = ProjectConstants.AuthSecret,
+            BasePath = ProjectConstants.BasePath
         };
 
         private readonly IFirebaseClient _firebaseClient;
