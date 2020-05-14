@@ -2,13 +2,12 @@
 
 __Advertisement :)__
 
-- This is my "Superior Grade" (don't know how it's called in your country) project it's not professional or nothing similar, it's just my try to learn new tech and introduce my self into micro services. This project was made with me during an intership 
-in a company so i didn't have much time to make this with all i wanted to do, so i will be updating it in my free time adding 
+- This is my "Superior Grade" (don't know how it's called in your country) project it's not professional or nothing similar, it's just my try to learn new tech and introduce my self into micro services. This project was made with me during an intership
+in a company so i didn't have much time to make this with all i wanted to do, so i will be updating it in my free time adding
 better error handling and Oauth2 support.
 - Feel free to use copy or send me feedback!
 
 Hope you like the project!
-
 
 ## Project Structure
 
@@ -24,7 +23,7 @@ all the other services will go in localhost.
 | kong | http://localhost | :8000 |
 | konga | http://localhost | :1337 |
 | auth | http://localhost | :3002 |
-| profile | http://localhost | :8100 | 
+| profile | http://localhost | :8100 |
 | chat | http://localhost | :5000 |
 | posts | http://localhost | :3000 |
 | notifications | http://localhost | :9000 |
@@ -41,7 +40,7 @@ all the other services will go in localhost.
 > > >
 > > > 📂**Profile**
 > > > > *This API is programmed using fastapi framework (Python) it hosts al the data of profiles without email and password and store it in a postgresql database.*
-> > > 
+> > >
 > > > 📂**Chat**
 > > > > *This API is programmed using .net CORE 3 (C#) and it hosts all the chat data and store it in a Firebase realtime database.*
 > > >
@@ -56,6 +55,7 @@ all the other services will go in localhost.
 ## Auth API setup
 
 Create a constants.clj file in the auth core package
+
 ```clj
 (ns auth.constants
   (:gen-class))
@@ -66,11 +66,13 @@ Create a constants.clj file in the auth core package
 ```
 
 Start DEV server
+
 ```bash
 sudo lein run dev
 ```
 
 Start PROD server
+
 ```bash
 sudo lein run dev
 ```
@@ -78,11 +80,13 @@ sudo lein run dev
 ## Profile API setup
 
 Install dependencies
+
 ```bash
 pip install -r requirements.txt
 ```
 
 Run server
+
 ```bash
 uvicorn main:app --reload --port 8100
 ```
@@ -90,6 +94,7 @@ uvicorn main:app --reload --port 8100
 ## Chat API setup
 
 Create Constants.cs file in the config folder
+
 ```cs
 using System;
 
@@ -104,16 +109,19 @@ namespace AppChat.config
 ```
 
 Make migrations
+
 ```bash
 dotnet ef migrations add {MigrationName}
 ```
 
 Update database
+
 ```bash
 dotnet ef database update
 ```
 
 Run server
+
 ```bash
 sudo dotnet run
 ```
@@ -121,16 +129,19 @@ sudo dotnet run
 ## Posts
 
 Get all dependencies
+
 ```bash
 go get -d ./...
 ```
 
 Run server DEV
+
 ```bash
-sudo go run *.go 
+sudo go run *.go
 ```
 
 Run server PROD
+
 ```bash
 sudo go build
 ```
@@ -138,20 +149,17 @@ sudo go build
 ## Notifications
 
 Compile api
+
 ```bash
 sbt compile
 ```
 
 Run server
+
 ```bash
 sbt run
 ```
 
-
 ![Alt text][id]
 
 [id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
-
-
-
-
