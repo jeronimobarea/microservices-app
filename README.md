@@ -30,7 +30,7 @@ all the other services will go in localhost.
 
 ##
 
-If you want to use the Konga interface to configure Kong you can download it [here](https://github.com/pantsel/konga)
+If you want to use the Konga interface to configure Kong you can download it [here](https://github.com/pantsel/konga).
 
 > 📂**Server**
 > > 📂**Kong**
