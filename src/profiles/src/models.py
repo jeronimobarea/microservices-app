@@ -27,7 +27,7 @@ class Profile(Base):
     image = Column(String, nullable=True)
     cover = Column(String, nullable=True)
     email = Column(String, unique=True)
-    username = Column(String, nullable=True, default=email.split('@')[0])
+    username = Column(String, nullable=True, default=email)
     description = Column(String, nullable=True)
     web = Column(String, nullable=True)
     is_verified = Column(String, nullable=True, default=False)
