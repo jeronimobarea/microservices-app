@@ -162,7 +162,7 @@ Run server
 sbt run
 ```
 
-### Future Updates
+# Future Updates
 
 I wan't to keep improving this project in my free time.
 
