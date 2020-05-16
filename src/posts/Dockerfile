@@ -1,9 +1,9 @@
-FROM golang:latest
+FROM golang:1.13
 
-WORKDIR /app
+WORKDIR /server/src/posts
+COPY . .
 
-COPY / /app
-
-EXPOSE 3000
+RUN go get -d -v ./...
+RUN go install -v ./...
 
 CMD ["go run *.go"]
