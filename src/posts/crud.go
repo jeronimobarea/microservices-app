@@ -3,10 +3,11 @@ package main
 import (
 	"encoding/json"
 	"fmt"
-	"golang.org/x/tools/go/ssa/interp/testdata/src/errors"
 	"log"
 	"net/http"
 	"time"
+
+	"golang.org/x/tools/go/ssa/interp/testdata/src/errors"
 )
 
 // Revised
@@ -37,6 +38,8 @@ func FilterPostTypeByCategory(page, perPage int, postType, category string) ([]b
 	var mediaPost []MediaPost
 
 	items := db.Offset(page).Limit(perPage).Where("post_type = ? AND category = ?", postType, category).Find(&mediaPost).Value
+
+	mediaPost, err := FillUserData(mediaPost)
 
 	var count int
 	_ = db.Table("media_posts").Count(&count)
