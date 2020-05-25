@@ -1,13 +1,10 @@
-FROM python:3.7
+FROM python:3
 
-WORKDIR /app
+WORKDIR /server/src/profiles
 
 COPY requirements.txt ./
+RUN pip install --no-cache-dir -r requirements.txt
 
-RUN pip install -r requirements.txt
+COPY . .
 
-COPY / /app
-
-EXPOSE 8100
-
-CMD [ "python", "main.py" ]
+CMD [ "uvicorn main:app --reload --port 8100" ]

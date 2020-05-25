@@ -162,6 +162,15 @@ Run server
 sbt run
 ```
 
+# Future Updates
+
+I wan't to keep improving this project in my free time.
+
+- [ ] Dockerize.
+- [ ] Improve Error handling.
+- [ ] Improve communication between micro services.
+- [ ] Finish notifications system.
+
 ![Alt text][id]
 
 [id]: https://octodex.github.com/images/dojocat.jpg  "The Dojocat"
