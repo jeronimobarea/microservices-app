@@ -5,8 +5,9 @@ import (
 
 	"bytes"
 	"encoding/json"
-	"golang.org/x/tools/go/ssa/interp/testdata/src/errors"
 	"net/http"
+
+	"golang.org/x/tools/go/ssa/interp/testdata/src/errors"
 )
 
 func FillUserData(mediaPost []MediaPost) ([]MediaPost, error) {
