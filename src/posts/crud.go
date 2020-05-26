@@ -137,8 +137,7 @@ func GetMediaByIdQuery(id string) ([]byte, error) {
 	}
 	log.Println(userData)
 
-	mediaPost.UserData.UserName = userData.UserName
-	mediaPost.UserData.Image = userData.Image
+	mediaPost.UserData = userData
 
 	response, _ := mediaPost.ToJson()
 	return response, nil
@@ -153,11 +152,27 @@ func PatchMediaPostQuery(id string, r *http.Request) ([]byte, error) {
 	decoder := json.NewDecoder(r.Body)
 	_ = decoder.Decode(&updated)
 
+	req, err := http.Get("http://127.0.0.1:8100/profiles/basic/" + mediaPost.CreatorId)
+
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+
+	}
+
+	decoder = json.NewDecoder(req.Body)
+	var userData UserData
+	err = decoder.Decode(&userData)
+	if err != nil {
+		panic(err)
+	}
+
 	mediaPost.Description = updated.Description
 	mediaPost.Title = updated.Title
 	mediaPost.PaymentQuantity = updated.PaymentQuantity
 	mediaPost.Category = updated.Category
 	mediaPost.LastModification = time.Now()
+	mediaPost.UserData = userData
 
 	db.Save(mediaPost)
 	response, _ := mediaPost.ToJson()
