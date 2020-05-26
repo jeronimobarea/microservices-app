@@ -167,6 +167,7 @@ func PatchMediaPostQuery(id string, r *http.Request) ([]byte, error) {
 		panic(err)
 	}
 
+	mediaPost.ID = updated.ID
 	mediaPost.Description = updated.Description
 	mediaPost.Title = updated.Title
 	mediaPost.PaymentQuantity = updated.PaymentQuantity
