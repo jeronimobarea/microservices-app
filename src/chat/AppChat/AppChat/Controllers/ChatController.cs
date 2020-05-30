@@ -150,6 +150,43 @@ namespace AppChat.Controllers
             return Ok(chat);
         }
 
+        [HttpGet("/users")]
+        public async Task<OkObjectResult> GetChatByUsers([FromBody] Chat compareChat)
+        {
+            var chat = _context.Chats.Where(c => c.ChatCreator == compareChat.ChatCreator).Where(c => c.RequestedUser == compareChat.RequestedUser).First();
+
+            var data = new List<string> {chat.ChatCreator, chat.RequestedUser};
+
+            var url = "http://localhost:8100/profiles/basic/list/";
+            var output = JsonConvert.SerializeObject(data.ToArray());
+
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri(url),
+                Content = new StringContent(output, Encoding.UTF8, "application/json"),
+            };
+
+            var response = await client.SendAsync(request).ConfigureAwait(false);
+            response.EnsureSuccessStatusCode();
+
+            var userList =
+                await response.Content.ReadAsAsync<List<UserData>>().ConfigureAwait(false);
+
+            if (chat.ChatCreator == userList[0].Id)
+            {
+                chat.CreatorData = userList[0];
+                chat.RequestedUserData = userList[1];
+            }
+            else
+            {
+                chat.CreatorData = userList[1];
+                chat.RequestedUserData = userList[0];
+            }
+
+            return Ok(chat);
+        }
+
         [HttpPost]
         public async Task<OkObjectResult> CreateChat([FromBody] Chat chat)
         {
