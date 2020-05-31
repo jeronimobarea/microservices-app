@@ -24,7 +24,6 @@ namespace AppChat.Controllers
     {
         private readonly ApplicationContext _context;
         private readonly IMapper _mapper;
-        private readonly IFirebaseClient _firebaseClient;
         private readonly Utils _utils = new Utils();
         private static readonly HttpClient client = new HttpClient();
 
@@ -34,11 +33,25 @@ namespace AppChat.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("all")]
+        public OkObjectResult GetAllChats()
+        {
+            var chatResponse = _context.Chats
+                .Where(c => c.Status.Equals("1"))
+                .Where(c => c.IsBlocked == false)
+                .OrderBy(c => c.CreationDate)
+                .ToList();
+
+            var filledChat = _utils.fillChatData(chatResponse.ToList());
+
+            return Ok(filledChat);
+        }
+
         [HttpGet("user/active")]
         public OkObjectResult GetActiveUserChats([FromQuery] PaginationQuery paginationQuery, string userId)
         {
             var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
-            var totalPages = _context.Chats.Count(c => c.Id != null);
+            var totalPages = _context.Chats.Where(c => c.Status.Equals("1")).Count(c => c.Id != null);
             var chatResponse = _context.Chats
                 .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
                 .Where(c => c.Status.Equals("1"))
@@ -64,7 +77,7 @@ namespace AppChat.Controllers
         public OkObjectResult GetPendingUserChats([FromQuery] PaginationQuery paginationQuery, string userId)
         {
             var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
-            var totalPages = _context.Chats.Count(c => c.Id != null);
+            var totalPages = _context.Chats.Where(c => c.Status.Equals("0")).Count(c => c.Id != null);
             var chatResponse = _context.Chats
                 .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
                 .Where(c => c.Status.Equals("0"))
@@ -91,7 +104,7 @@ namespace AppChat.Controllers
         public OkObjectResult GetBlockedUserChats([FromQuery] PaginationQuery paginationQuery, string userId)
         {
             var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
-            var totalPages = _context.Chats.Count(c => c.Id != null);
+            var totalPages = _context.Chats.Where(c => c.IsBlocked).Count(c => c.Id != null);
             var chatResponse = _context.Chats
                 .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
                 .Where(c => c.IsBlocked == true)
