@@ -25,6 +25,7 @@ namespace AppChat.utils
             var url = "http://localhost:8100/profiles/basic/list/";
             var output = JsonConvert.SerializeObject(data.ToArray());
 
+
             var request = new HttpRequestMessage
             {
                 Method = HttpMethod.Get,
@@ -41,7 +42,7 @@ namespace AppChat.utils
             {
                 for (var j = 0; j < usersList.Count(); j++)
                 {
-                    if (i > j)
+                    if (i > usersList.Count())
                     {
                         j = 0;
                     }
@@ -56,6 +57,8 @@ namespace AppChat.utils
                     }
                 }
             }
+
+            Console.WriteLine("Finished");
             return chats;
         }
     }
