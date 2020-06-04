@@ -79,7 +79,7 @@ namespace AppChat.Controllers
             var paginationFilter = _mapper.Map<PaginationFilter>(paginationQuery);
             var totalPages = _context.Chats.Where(c => c.Status.Equals("0")).Count(c => c.Id != null);
             var chatResponse = _context.Chats
-                .Where(c => c.ChatCreator == userId || c.RequestedUser == userId)
+                .Where(c => c.RequestedUser == userId)
                 .Where(c => c.Status.Equals("0"))
                 .Where(c => c.IsBlocked == false)
                 .OrderBy(c => c.CreationDate)
